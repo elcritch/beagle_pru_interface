@@ -1,6 +1,5 @@
 SRCDIRS = src
-SUBDIRS = pru/lib/rpmsg pru/lib/pru_support pru/lib/msgpack pru/lib/softspi
-TEST_SUBDIRS = test/softspi_test
+# TEST_SUBDIRS = test/pru_msg
 
 export ARTIFACT_DIR = _build/pru
 
@@ -20,24 +19,11 @@ test: $(TEST_SUBDIRS)
 _priv:
 	mkdir -p priv/
 
-artifact_build:
-	mkdir -p $(ARTIFACT_DIR)/include
-	cp -RL pru/include/* $(ARTIFACT_DIR)/include/
+# $(TEST_SUBDIRS): 
+	# $(MAKE) -C $@
 
-clean_artifact:
-	rm -Rf $(ARTIFACT_DIR)/
-
-$(SUBDIRS): artifact_build
-	env | grep -i pru | sort
-	$(MAKE) -C $@
-
-$(TEST_SUBDIRS): artifact_build
-	$(MAKE) -C $@
-
-clean: clean_artifact
-	$(eval export PRU_CGT := "/dev/null")
+clean: 
 	@for d in $(SRCDIRS); do (cd $$d; $(MAKE) clean ); done
-	@for d in $(SUBDIRS); do (cd $$d; $(MAKE) clean ); done
-	@for d in $(TEST_SUBDIRS); do (cd $$d; $(MAKE) clean ); done
+	# @for d in $(TEST_SUBDIRS); do (cd $$d; $(MAKE) clean ); done
 
 .PHONY: $(SUBDIRS)

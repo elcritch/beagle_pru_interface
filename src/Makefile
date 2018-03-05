@@ -54,8 +54,7 @@ all: $(DEFAULT_TARGETS)
 	$(CC) -c $(ERL_CFLAGS) $(CFLAGS) -o $@ $<
 
 ../priv/pru_msg: $(OBJ)
-	echo "CC:" $(CC)
-	env | sort | grep -i -e PATH -e CC -e CXX -e PRU
+	echo "CC:" $(shell which cc)
 	$(CC) $^ $(ERL_LDFLAGS) $(LDFLAGS) -o $@
 
 clean:
