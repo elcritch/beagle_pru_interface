@@ -1,45 +1,20 @@
-defmodule Pru do
+defmodule BeaglePru.System do
   require Logger
 
   @moduledoc """
-  BeagleBone Black/Green PRU Helper Library
+  BeagleBone Black/Green/Pocket PRU Helper Library
   """
 
   defguard is_valid_pru?(pruid) when pruid >= 0 and pruid <= 1
 
-  @doc """
-  Loads the cape-universal and cape-univ-hdmi to maximize
-  the number of available pins since HDMI is disabled
-
-  Returns ':ok'
-
-  ## Examples
-
-  iex> Pru.init_pins
-  :ok
-
-  """
-  def init_pins do
+  def configure_pins do
     run("config-pin overlay cape-universal > /dev/null")
     run("config-pin overlay cape-univ-hdmi > /dev/null")
     :ok
   end
 
-  @doc """
-  Loads the rpmsg_pru kernel module to enable RPMsg communication.
-  Enables /dev/rpmsg_pru3(0/1) depending on which PRU has the
-  correct calls to probe the module.
-
-  Returns ':ok'
-
-  ## Examples
-
-  iex> Pru.init_rpmsg
-  :ok
-
-  """
-  def init_rpmsg do
-    :os.cmd('modprobe rpmsg_pru')
+  def configure_rpmsg do
+    run("modprobe rpmsg_pru")
     :ok
   end
 
@@ -49,55 +24,55 @@ defmodule Pru do
   def sysfs_path(id), do: raise("Unknown PRU: #{inspect(id)}")
 
   @doc """
-  Boots the specified PRU core.
+  Load and boot a given firmware for on a given PRU processor core.
 
   Returns ':ok'
 
   ## Examples
 
-  iex> Pru.boot 0
+  iex> BealgePru.System.boot 0
   :ok
 
   """
-  def boot(pru) when is_valid_pru?(pru) do
-    run("echo 'am335x-pru#{pru}-fw' > #{sysfs_path(pru)}/firmware")
+  def boot(pru, firmware \\ "am335x-pru#{pru}-fw") when is_valid_pru?(pru) do
+    run("echo '#{firmware}' > #{sysfs_path(pru)}/firmware")
     run("echo 'start' > #{sysfs_path(pru)}/state")
     :ok
   end
 
-  def boot(pru), do: raise("Unknown PRU: #{inspect(pru)}")
+  def boot(pru, _firmware \\ ""), do: raise("Unknown PRU: #{inspect(pru)}")
 
   @doc """
-  Halts the specified PRU core.
+  Stop a given PRU processor core.
 
   Returns ':ok'
 
   ## Examples
 
-  iex> Pru.boot 0
+  iex> BealgePru.System.stop 0
   :ok
 
   """
-  def halt(pru) when is_valid_pru?(pru) do
-    run("echo 'start' > #{sysfs_path(pru)}/state")
+  def stop(pru) when is_valid_pru?(pru) do
+    run("echo 'stop' > #{sysfs_path(pru)}/state")
     :ok
   end
 
-  def halt(pru), do: raise("Unknown PRU: #{inspect(pru)}")
+  def stop(pru), do: raise("Unknown PRU: #{inspect(pru)}")
 
   @doc """
-  Reboots the specified PRU core.
+  Reboots a given PRU processor core.
 
   Returns ':ok'
 
   ## Examples
 
-  iex> Pru.reboot 0
+  iex> BealgePru.System.reboot 0
   :ok
 
   """
   def reboot(pru) do
-    :ok = halt(pru)
+    :ok = stop(pru)
     :ok = boot(pru)
     :ok
   end
@@ -109,27 +84,19 @@ defmodule Pru do
 
   ## Examples
 
-  iex> Pru.pin_out 'P8_11'
+  iex> BealgePru.System.pin 'P8_11', :out
+  :ok
+
+  iex> BealgePru.System.pin 'P8_11', :in
   :ok
 
   """
-  def pin_out(pin) do
+  def pin(pin, :out) do
     run("config-pin #{pin} pruout")
     :ok
   end
 
-  @doc """
-  Enables the specified pin for use as a GPIO input for the PRUs.
-
-  Returns ':ok'
-
-  ## Examples
-
-  iex> Pru.pin_in 'P8_11'
-  :ok
-
-  """
-  def pin_in(pin) do
+  def pin(pin, :in) do
     run("config-pin #{pin} pruin")
     :ok
   end

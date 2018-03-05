@@ -8,6 +8,7 @@ defmodule PruInterface.MixProject do
       elixir: "~> 1.6",
       start_permanent: Mix.env() == :prod,
       compilers: [:elixir_make] ++ Mix.compilers(),
+      package: package(),
       deps: deps()
     ]
   end
@@ -16,6 +17,15 @@ defmodule PruInterface.MixProject do
   def application do
     [
       extra_applications: [:logger]
+    ]
+  end
+
+  defp package do
+    [
+      maintainers: ["Jaremy Creechley"],
+      files: package_files(),
+      licenses: ["Apache 2.0"],
+      links: %{"Github" => "https://github.com/elcritch/#{app}"}
     ]
   end
 
