@@ -37,7 +37,7 @@ defmodule PruInterface.MixProject do
       "LICENSE",
       "mix.exs",
       "README.md",
-      "lib",
+      "lib"
     ]
   end
 
@@ -45,7 +45,7 @@ defmodule PruInterface.MixProject do
   defp deps do
     [
       {:ex_doc, ">= 0.0.0", only: :dev},
-      {:elixir_make, "~> 0.4.0", runtime: false},
+      {:elixir_make, "~> 0.4.0", runtime: false}
     ]
   end
 end
