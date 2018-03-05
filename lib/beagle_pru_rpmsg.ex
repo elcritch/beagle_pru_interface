@@ -1,4 +1,4 @@
-defmodule Pru.Port do
+defmodule BeaglePru.RPMsg do
   use GenServer
   require Logger
 

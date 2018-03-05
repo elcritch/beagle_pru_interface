@@ -5,7 +5,7 @@ defmodule BeaglePru.System do
   BeagleBone Black/Green/Pocket PRU Helper Library
   """
 
-  defguard is_valid_pru?(pruid) when pruid >= 0 and pruid <= 1
+  defguard is_valid_pru?(coreid) when coreid >= 0 and coreid <= 1
 
   def configure_pins do
     run("config-pin overlay cape-universal > /dev/null")
@@ -34,13 +34,15 @@ defmodule BeaglePru.System do
   :ok
 
   """
-  def boot(pru, firmware \\ "am335x-pru#{pru}-fw") when is_valid_pru?(pru) do
-    run("echo '#{firmware}' > #{sysfs_path(pru)}/firmware")
-    run("echo 'start' > #{sysfs_path(pru)}/state")
+  def boot(core), do: boot(core, "am335x-pru#{core}-fw")
+
+  def boot(core, firmware) when is_valid_pru?(core) do
+    run("echo '#{firmware}' > #{sysfs_path(core)}/firmware")
+    run("echo 'start' > #{sysfs_path(core)}/state")
     :ok
   end
 
-  def boot(pru, _firmware \\ ""), do: raise("Unknown PRU: #{inspect(pru)}")
+  def boot(core, _firmware), do: raise("Unknown PRU: #{inspect(core)}")
 
   @doc """
   Stop a given PRU processor core.
@@ -53,12 +55,12 @@ defmodule BeaglePru.System do
   :ok
 
   """
-  def stop(pru) when is_valid_pru?(pru) do
-    run("echo 'stop' > #{sysfs_path(pru)}/state")
+  def stop(core) when is_valid_pru?(core) do
+    run("echo 'stop' > #{sysfs_path(core)}/state")
     :ok
   end
 
-  def stop(pru), do: raise("Unknown PRU: #{inspect(pru)}")
+  def stop(core), do: raise("Unknown PRU: #{inspect(core)}")
 
   @doc """
   Reboots a given PRU processor core.
@@ -71,9 +73,9 @@ defmodule BeaglePru.System do
   :ok
 
   """
-  def reboot(pru) do
-    :ok = stop(pru)
-    :ok = boot(pru)
+  def reboot(core) do
+    :ok = stop(core)
+    :ok = boot(core)
     :ok
   end
 
