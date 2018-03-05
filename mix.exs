@@ -3,7 +3,7 @@ defmodule PruInterface.MixProject do
 
   def project do
     [
-      app: :pru_interface,
+      app: :beagle_pru_interface,
       version: "0.1.0",
       elixir: "~> 1.6",
       start_permanent: Mix.env() == :prod,
