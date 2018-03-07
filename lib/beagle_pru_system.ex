@@ -8,8 +8,8 @@ defmodule BeaglePru.System do
   defguard is_valid_pru?(coreid) when coreid >= 0 and coreid <= 1
 
   def configure_pins do
-    run("config-pin overlay cape-universal > /dev/null")
-    run("config-pin overlay cape-univ-hdmi > /dev/null")
+    run("config-pin overlay cape-universal ")
+    run("config-pin overlay cape-univ-hdmi ")
     :ok
   end
 
@@ -104,7 +104,7 @@ defmodule BeaglePru.System do
   end
 
   def run(cmd) do
-    Logger.info(:os.cmd(cmd |> to_charlist))
+    IO.puts(:os.cmd(cmd |> to_charlist))
     :os.timestamp()
   end
 end
