@@ -104,6 +104,11 @@ defmodule BeaglePru.System do
   end
 
   def run(cmd) do
+    Logger.info(:os.cmd(cmd |> to_charlist))
+    :os.timestamp()
+  end
+
+  def run(cmd, :raw) do
     IO.puts(:os.cmd(cmd |> to_charlist))
     :os.timestamp()
   end
