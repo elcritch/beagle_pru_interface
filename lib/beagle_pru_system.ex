@@ -93,13 +93,15 @@ defmodule BeaglePru.System do
   :ok
 
   """
-  def pin(pin, :out) do
-    run("config-pin #{pin} pruout")
-    :ok
-  end
+  def pin(pin, :pruout), do: set_pin(pin, :pruout)
+  def pin(pin, :pruin), do: set_pin(pin, :pruin)
+  def pin(pin, :input), do: set_pin(pin, :gpio_input)
+  def pin(pin, :output), do: set_pin(pin, :gpio_output)
+  def pin(pin, :gpio), do: set_pin(pin, :gpio)
+  def pin(pin, cmd), do: set_pin(pin, cmd)
 
-  def pin(pin, :in) do
-    run("config-pin #{pin} pruin")
+  defp set_pin(pin, cmd) do
+    run("config-pin #{pin} #{cmd}")
     :ok
   end
 
