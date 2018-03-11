@@ -100,6 +100,46 @@ defmodule BeaglePru.System do
   def pin(pin, :gpio), do: set_pin(pin, :gpio)
   def pin(pin, cmd), do: set_pin(pin, cmd)
 
+  def pin_info(pin) do
+    import String
+
+    case :os.cmd('config-pin -i #{pin}') do
+      "Invalid pin:" <> _rem ->
+        {:error, :invalid_pin, pin}
+      "Pin is not modifyable:" <> _res ->
+        {:ok, %{pin_modifyable: false}}
+      response ->
+        pin_info =
+          response
+          |> split("\n")
+          |> Enum.each(fn s -> [k, v] = split(s, ":"); {k |> downcase() |> trim, v |> downcase |> trim} end)
+
+        with {:ok, pin_name} <- Map.fetch(pin_info, "pin name"),
+             {:ok, gpio_id} <- Map.fetch(pin_info, "kernel gpio id"),
+             {:ok, gpio_number} <- gpio_id |> Integer.parse(),
+             {:ok, pru_id} <- Map.fetch(pin_info, "pru gpio id"),
+             {:ok, pru_number} <- pru_id |> Integer.parse(),
+             {:ok, default_state} <- Map.fetch(pin_info, "function if no cape loaded"),
+             {:ok, cape_funcs} <- Map.fetch(pin_info, "function if cape loaded"),
+             {:ok, pin_funcs} <- Map.fetch(pin_info, "function information")
+        do
+          pin_info = %{
+            name: pin_name,
+            gpio_id: gpio_number,
+            pru_id: pru_number,
+            default: pin_funcs |> trim(),
+            functions: %{
+              standard: pin_funcs |> split(" "), 
+              cape: cape_funcs |> split(" "),
+              default: default_state,
+            },
+            status: :os.cmd('config-pin -q #{pin}')
+          }
+          {:ok, pin_info}
+        end
+    end
+  end
+
   defp set_pin(pin, cmd) do
     run("config-pin #{pin} #{cmd}")
     :ok
