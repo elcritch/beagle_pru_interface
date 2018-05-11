@@ -6,7 +6,9 @@ defmodule PruInterface.MixProject do
   def project do
     [
       app: @app,
-      version: "0.1.0",
+      description:
+        "Basic library that enables easy interaction and control with the PRU-ICSS cores present in BeagleBone Boards.",
+      version: "0.1.1",
       elixir: "~> 1.6",
       start_permanent: Mix.env() == :prod,
       compilers: [:elixir_make] ++ Mix.compilers(),
@@ -26,7 +28,7 @@ defmodule PruInterface.MixProject do
     [
       maintainers: ["Jaremy Creechley"],
       files: package_files(),
-      licenses: ["MPL-2.0"],
+      licenses: ["Apache-2.0"],
       links: %{"Github" => "https://github.com/elcritch/#{@app}"}
     ]
   end
@@ -37,8 +39,11 @@ defmodule PruInterface.MixProject do
       "LICENSE",
       "mix.exs",
       "README.md",
-      "lib"
-    ]
+      "lib",
+      "src/linux/i2c-dev.h",
+    ] ++
+    Path.wildcard("src/*.c") ++
+    Path.wildcard("src/*.h")
   end
 
   # Run "mix help deps" to learn about dependencies.
