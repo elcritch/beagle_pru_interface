@@ -7,7 +7,7 @@ defmodule PruInterface.MixProject do
     [
       app: @app,
       description:
-        "Basic library that enables easy interaction and control with the PRU-ICSS cores present in BeagleBone Boards.",
+        "Pure Elixir library to control and async communicate with the PRU-ICSS cores on BeagleBone Boards.",
       version: "0.1.1",
       elixir: "~> 1.6",
       start_permanent: Mix.env() == :prod,
