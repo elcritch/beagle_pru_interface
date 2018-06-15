@@ -40,8 +40,11 @@ defmodule PruInterface.MixProject do
       "mix.exs",
       "README.md",
       "lib",
-      "src",
-    ]
+      "src/Makefile",
+      "src/linux/i2c-dev.h",
+    ] ++
+    Path.wildcard("src/*.c") ++
+    Path.wildcard("src/*.h")
   end
 
   # Run "mix help deps" to learn about dependencies.
