@@ -8,7 +8,7 @@ defmodule PruInterface.MixProject do
       app: @app,
       description:
         "Pure Elixir library to control and async communicate with the PRU-ICSS cores on BeagleBone Boards.",
-      version: "0.1.1",
+      version: "0.1.2",
       elixir: "~> 1.6",
       start_permanent: Mix.env() == :prod,
       compilers: [:elixir_make] ++ Mix.compilers(),
@@ -40,10 +40,8 @@ defmodule PruInterface.MixProject do
       "mix.exs",
       "README.md",
       "lib",
-      "src/linux/i2c-dev.h",
-    ] ++
-    Path.wildcard("src/*.c") ++
-    Path.wildcard("src/*.h")
+      "src",
+    ]
   end
 
   # Run "mix help deps" to learn about dependencies.
